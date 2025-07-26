@@ -1,0 +1,36 @@
+{{ define "title" }}服务器状态总览 - GoProbe{{ end }}
+
+{{ define "content" }}
+<h2>系统信息</h2>
+<ul>
+    <li>操作系统：<code>{{ .System.OS }}</code></li>
+    <li>架构类型：<code>{{ .System.Arch }}</code></li>
+    <li>Go版本：<code>{{ .System.GoVersion }}</code></li>
+    <li>CPU核心数：{{ .System.NumCPU }}</li>
+    <li>主机名：{{ .System.Hostname }}</li>
+    <li>进程 PID：{{ .System.ProcessID }}</li>
+</ul>
+
+<h2>内存使用</h2>
+<ul>
+    <li>当前已分配：{{ .Memory.Alloc }} 字节</li>
+    <li>总共分配：{{ .Memory.TotalAlloc }} 字节</li>
+    <li>系统申请：{{ .Memory.Sys }} 字节</li>
+    <li>GC 次数：{{ .Memory.NumGC }}</li>
+</ul>
+
+<h2>磁盘使用</h2>
+<ul>
+    <li>总容量：{{ .Disk.Total }} 字节</li>
+    <li>已用容量：{{ .Disk.Used }} 字节</li>
+    <li>可用容量：{{ .Disk.Free }} 字节</li>
+    <li>使用率：{{ printf "%.2f" .Disk.Usage }}%</li>
+</ul>
+
+<h2>运行信息</h2>
+<ul>
+    <li>服务器已运行：{{ .Uptime }}</li>
+    <li>客户端 IP：{{ .ClientIP }}</li>
+    <li>User-Agent：<code>{{ .UserAgent }}</code></li>
+</ul>
+{{ end }}
