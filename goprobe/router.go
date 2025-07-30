@@ -3,22 +3,44 @@ package main
 import (
 	"goprobe/probe"
 	"net/http"
-	"text/template"
 	"time"
-	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
-// IndexData 封装所有展示到模板的数据
-type IndexData struct {
-	System *probe.SystemInfo
-	Memory *probe.MemoryInfo
-	Disk   *probe.DiskInfo
-	Uptime    string // 服务器运行时间
-	ClientIP  string // 请求客户端IP
-	UserAgent string // 请求UA
+// gatherData 收集所有探针数据
+func gatherData(c *gin.Context) gin.H {
+    sysInfo, _ := probe.GetSystemInfo()
+    memInfo := probe.GetMemoryInfo()
+    diskInfo, _ := probe.GetDiskInfo()
+    uptime := time.Since(startTime).Round(time.Second).String()
+
+    return gin.H{
+        "System":    sysInfo,
+        "Memory":    memInfo,
+        "Disk":      diskInfo,
+        "Uptime":    uptime,
+        "ClientIP":  c.ClientIP(),
+        "UserAgent": c.Request.UserAgent(),
+    }
 }
 
-// LoggingMiddleware 是简单的请求日志中间件
+// registerRoutes 统一路由注册
+func registerRoutes(r *gin.Engine) {
+    // 首页 HTML 渲染
+    r.GET("/", func(c *gin.Context) {
+        data := gatherData(c)
+        // 渲染主模板 base.html
+        c.HTML(http.StatusOK, "base", data)
+    })
+
+    // JSON 接口
+    r.GET("/api/status", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gatherData(c))
+    })
+}
+
+/* // LoggingMiddleware 是简单的请求日志中间件
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("[%s] %s %s from %s\n", time.Now().Format("2006-01-02 15:04:05"), r.Method, r.URL.Path, r.RemoteAddr)
@@ -76,4 +98,4 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
     tmpl.ExecuteTemplate(w, "base", data)
-}
+} */

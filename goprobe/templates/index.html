@@ -1,36 +1,44 @@
 {{ define "title" }}服务器状态总览 - GoProbe{{ end }}
 
 {{ define "content" }}
-<h2>系统信息</h2>
-<ul>
-    <li>操作系统：<code>{{ .System.OS }}</code></li>
-    <li>架构类型：<code>{{ .System.Arch }}</code></li>
-    <li>Go版本：<code>{{ .System.GoVersion }}</code></li>
-    <li>CPU核心数：{{ .System.NumCPU }}</li>
-    <li>主机名：{{ .System.Hostname }}</li>
-    <li>进程 PID：{{ .System.ProcessID }}</li>
-</ul>
+  <section>
+    <h2>系统信息</h2>
+        <ul>
+        <li>操作系统：<span id="sys-os">{{ .System.OS }}</span></li>
+        <li>架构：<span id="sys-arch">{{ .System.Arch }}</span></li>
+        <li>Go 版本：<span id="sys-go">{{ .System.GoVersion }}</span></li>
+        <li>CPU 核心数：<span id="sys-cpu">{{ .System.NumCPU }}</span></li>
+        <li>主机名：<span id="sys-host">{{ .System.Hostname }}</span></li>
+        <li>PID：<span id="sys-pid">{{ .System.ProcessID }}</span></li>
+        </ul>
+  </section>
 
-<h2>内存使用</h2>
-<ul>
-    <li>当前已分配：{{ .Memory.Alloc }} 字节</li>
-    <li>总共分配：{{ .Memory.TotalAlloc }} 字节</li>
-    <li>系统申请：{{ .Memory.Sys }} 字节</li>
-    <li>GC 次数：{{ .Memory.NumGC }}</li>
-</ul>
+  <section>
+    <h2>内存使用</h2>
+    <ul>
+        <li>Alloc：<span id="mem-alloc">{{ .Memory.Alloc }}</span></li>
+        <li>TotalAlloc：<span id="mem-total">{{ .Memory.TotalAlloc }}</span></li>
+        <li>Sys：<span id="mem-sys">{{ .Memory.Sys }}</span></li>
+        <li>GC 次数：<span id="mem-gc">{{ .Memory.NumGC }}</span></li>
+    </ul>
+  </section>
 
-<h2>磁盘使用</h2>
-<ul>
-    <li>总容量：{{ .Disk.Total }} 字节</li>
-    <li>已用容量：{{ .Disk.Used }} 字节</li>
-    <li>可用容量：{{ .Disk.Free }} 字节</li>
-    <li>使用率：{{ printf "%.2f" .Disk.Usage }}%</li>
+  <section>
+    <h2>磁盘使用（MB）</h2>
+    <ul>
+      <li>总容量：<span id="disk-total">{{ .Disk.TotalMB }}</span> MB</li>
+      <li>可用容量：<span id="disk-free">{{ .Disk.FreeMB }}</span> MB</li>
+      <li>已用容量：<span id="disk-used">{{ .Disk.UsedMB }}</span> MB</li>
+      <li>使用率：<span id="disk-pct">{{ .Disk.UsedPercent }}</span>%</li>
 </ul>
+  </section>
 
-<h2>运行信息</h2>
-<ul>
-    <li>服务器已运行：{{ .Uptime }}</li>
-    <li>客户端 IP：{{ .ClientIP }}</li>
-    <li>User-Agent：<code>{{ .UserAgent }}</code></li>
-</ul>
+  <section>
+    <h2>运行信息</h2>
+    <ul>
+        <li>Uptime：<span id="uptime">{{ .Uptime }}</span></li>
+        <li>客户端 IP：<span id="client-ip">{{ .ClientIP }}</span></li>
+        <li>User-Agent：<span id="ua">{{ .UserAgent }}</span></li>
+    </ul>
+  </section>
 {{ end }}

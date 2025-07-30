@@ -2,38 +2,60 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ template "title" . }}</title>
-    <style>
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            margin: 40px auto;
-            max-width: 900px;
-            background-color: #f9f9f9;
-            padding: 2rem;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #333;
-            margin-top: 2rem;
-        }
-        ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        li {
-            margin: 6px 0;
-        }
-        code {
-            background: #eee;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>{{ block "title" . }}GoProbe 探针{{ end }}</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
+<script>
+  // 把 JSON 接口数据更新到对应 DOM
+  async function fetchAndUpdate() {
+    try {
+      const res = await fetch('/api/status');
+      const d = await res.json();
+
+      // 系统
+      document.getElementById('sys-os').innerText    = d.System.OS;
+      document.getElementById('sys-arch').innerText  = d.System.Arch;
+      document.getElementById('sys-go').innerText    = d.System.GoVersion;
+      document.getElementById('sys-cpu').innerText   = d.System.NumCPU;
+      document.getElementById('sys-host').innerText  = d.System.Hostname;
+      document.getElementById('sys-pid').innerText   = d.System.ProcessID;
+
+      // 内存
+      document.getElementById('mem-alloc').innerText = d.Memory.Alloc;
+      document.getElementById('mem-total').innerText = d.Memory.TotalAlloc;
+      document.getElementById('mem-sys').innerText   = d.Memory.Sys;
+      document.getElementById('mem-gc').innerText    = d.Memory.NumGC;
+
+      // 磁盘
+      document.getElementById('disk-total').innerText = d.Disk.TotalMB;
+      document.getElementById('disk-free').innerText  = d.Disk.FreeMB;
+      document.getElementById('disk-used').innerText  = d.Disk.UsedMB;
+      document.getElementById('disk-pct').innerText   = d.Disk.UsedPercent;
+
+      // 运行信息
+      document.getElementById('uptime').innerText   = d.Uptime;
+      document.getElementById('client-ip').innerText= d.ClientIP;
+      document.getElementById('ua').innerText       = d.UserAgent;
+
+    } catch (err) {
+      console.error('更新失败：', err);
+    }
+  }
+
+  // 初次加载与定时刷新
+  fetchAndUpdate();
+  setInterval(fetchAndUpdate, 5000);  // 每 5 秒拉取一次
+</script>
+
 <body>
-    <h1>GoProbe 状态监控</h1>
+  <header>
+    <h1>GoProbe 服务器探针</h1>
+  </header>
+  <main>
     {{ template "content" . }}
+  </main>
+  <footer>&copy; 2025 GoProbe</footer>
 </body>
 </html>
 {{ end }}
